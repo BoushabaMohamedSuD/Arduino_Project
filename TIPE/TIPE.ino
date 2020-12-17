@@ -24,6 +24,11 @@ bool keystop = true;
 bool keygo = true;
 
 
+///// calcule speed
+int prevDist = 0;
+long speedn = 0;
+
+
 
 void setup() {
 
@@ -81,10 +86,23 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
   distance = duration * 0.034 / 2;
+  if (prevDist == 0) {
+    speedn = 0;
+  } else {
+    speedn = (distance - prevDist) / 0.01;
+  }
+  speedn=abs(speedn);
+  prevDist = distance;
+
+
   // Prints the distance on the Serial Monitor
   Serial.print("Distance: ");
   Serial.print(distance);
-  Serial.println(" cm");
+  Serial.print(" cm");
+  Serial.print("  /////  ");
+  Serial.print("Speed: ");
+  Serial.print(speedn);
+  Serial.println(" cm/s");
   if (distance < 10) {
     digitalWrite(13, HIGH);
     lcd.print("Stop"); // Print the string "Hello World!"
@@ -92,10 +110,10 @@ void loop() {
     if (keystop) {
       keystop = false;
       keygo = true;
-      setColor(0, 0, 255);
+      setColor(0, 255, 255);
 
     }
-    
+
 
   } else {
     digitalWrite(13, LOW);
