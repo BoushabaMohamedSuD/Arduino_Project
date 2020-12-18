@@ -35,8 +35,9 @@ void setup() {
   /// lcd
   lcd.init();                      // initialize the lcd
   lcd.backlight();
+  lcd.clear();
   lcd.setCursor(2, 0); // Set the cursor on the third column and first row.
-  lcd.print("Hello World!"); // Print the string "Hello World!"
+  lcd.print("Hello Chaimaa!"); // Print the string "Hello World!"
 
 
 
@@ -64,8 +65,13 @@ void setup() {
 
 
   // led rgb
-
-
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Distance "); // Print the string "Hello World!".
+  lcd.setCursor(9, 0);
+  lcd.print(0);
+  lcd.setCursor(14, 0);
+  lcd.print("cm");
 
 }
 
@@ -79,6 +85,7 @@ void loop() {
   delayMicroseconds(2);
   // Sets the trigPin on HIGH state for 10 micro seconds
   digitalWrite(trigPin, HIGH);
+  //lcd.clear();
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
 
@@ -86,25 +93,38 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   // Calculating the distance
   distance = duration * 0.034 / 2;
+
+
+
+  // Prints the distance on the Serial Monitor
+
+  if (prevDist != 0 && prevDist != distance) {
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.print(" cm");
+    Serial.println("  /////  ");
+    lcd.setCursor(9, 0); // Set the cursor on the third column and first row.
+    lcd.print("     ");
+    lcd.setCursor(9, 0);
+    lcd.print(distance); // Print the string "Hello World!"
+  }
+
   if (prevDist == 0) {
     speedn = 0;
   } else {
     speedn = (distance - prevDist) / 0.01;
   }
-  speedn=abs(speedn);
+  speedn = abs(speedn);
   prevDist = distance;
 
+  /* Serial.print("Speed: ");
+    Serial.print(speedn);
+    Serial.println(" cm/s");*/
 
-  // Prints the distance on the Serial Monitor
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.print(" cm");
-  Serial.print("  /////  ");
-  Serial.print("Speed: ");
-  Serial.print(speedn);
-  Serial.println(" cm/s");
+
   if (distance < 10) {
     digitalWrite(13, HIGH);
+    lcd.setCursor(7, 1); // Set the cursor on the third column and first row.
     lcd.print("Stop"); // Print the string "Hello World!"
     tone(11, 200, 500);
     if (keystop) {
@@ -117,7 +137,8 @@ void loop() {
 
   } else {
     digitalWrite(13, LOW);
-    lcd.print("Gooo!"); // Print the string "Hello World!"
+    lcd.setCursor(7, 1); // Set the cursor on the third column and first row.
+    lcd.print("Move"); // Print the string "Hello World!"
     if (keygo) {
       keystop = true;
       keygo = false;
